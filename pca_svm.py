@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
 from tqdm import tqdm
@@ -14,11 +15,17 @@ from mlxtend.plotting import plot_learning_curves
 import warnings
 warnings.filterwarnings("ignore")
 
+parser = ArgumentParser(add_help=True)
+parser.add_argument('--train-csv', required=True)
+parser.add_argument('--img-dir', required=True)
+
+args = parser.parse_args()
+
 def preprocess(im):
     im = cv2.resize(im, (100, 100))
     return cv2.equalizeHist(im)
 
-f = open(r"/Users/pritiagrawal/projectData/val.csv","r")
+f = open(args.train_csv,"r")
 c=0
 x=[]
 y=[]
@@ -27,12 +34,12 @@ first_line = f.readline()
 for i in f:
     if not(re.match(r'^\s*$', i)):
         filename = i.split(',')[0]
-        trainfile=os.path.abspath(os.path.join(r'/Users/pritiagrawal/projectData/crop', filename))
+        trainfile=os.path.abspath(os.path.join(args.img_dir, filename))
         img = cv2.imread(trainfile)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         x.append(img)
         y.append(i[-2])
-        if c ==2000:
+        if c ==500:
             break
         c=c+1
 images = (preprocess(im) for im in x)
